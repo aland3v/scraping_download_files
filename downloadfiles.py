@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 resultado = []
 
 # Pagina de donde se va a descargar
-url = ""
+url = "pon aqui la url"
 
 # Es necesario especificar la cabezara para que el servidor no rechace nuestra conexion
 headers = {
@@ -32,20 +32,25 @@ def conecta():
 
 #Inicio del programa
 def main():
+  print("Obteniendo la pagina")
   page = conecta() # obtiene la pagina
   soup = BeautifulSoup(page.content,'html.parser')
   
-  url_files = soup.find_all('tag',class_='class')
+  print("Obteniendo tags que cumplen la condición")
+  url_files = soup.find_all('tag que contienela url',class_='clase que identifica al tag')
 
+  print("Obteniendo las Urls absolutas")
   for item in url_files:
     if("https://" not in item["href"]): # Hay URLs relativas y absolutas
-      file_url = "https://www......com" + item["href"]
+      file_url = "pon aka el dominio si la url es relativa" + item["href"]
     else:
       file_url = item["href"]
-
+    
+    print("Url encontrada: {0}".format(file_url))
+    
     # path donde se almacenará
     file_name = "files/"+os.path.basename(file_url) 
-    
+
     # Verifica si el archivo ya esta descargado, sino entonces descarga
     if(not os.path.isfile(file_name)):
       sw = True
@@ -56,14 +61,16 @@ def main():
           time.sleep(0.01)
           
           # Inicia la descarga, indicamos los headers correspondientes
+          print("Descargando fichero: {0}".format(file_url))
           r = requests.get(file_url, headers=headers)
           with open(file_name, 'wb') as f:
               f.write(r.content)
 
           # Retrieve HTTP meta-data
-          print(r.status_code)
-          print(r.headers['content-type'])
-          print(r.encoding)
+          print("METADATA")
+          print("Status code: {0}".format(r.status_code))
+          print("Content-type: {0}".format(r.headers['content-type']))
+          print("Encoding: {0}".format(r.encoding))
 
           sw = False
         except requests.exceptions.Timeout:
@@ -74,6 +81,7 @@ def main():
             print("Muchas redireccionles -> Reintentando")
         except requests.exceptions.RequestException as e:
             # catastrophic error. bail.
+            print("Oops hubo un error en Solicitud: ")
             raise SystemExit(e)
     else:
       print("El archivo: "+file_url+" ya esta descargado!!!")
